@@ -47,5 +47,11 @@ public class HabitController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{habitId}/complete-today")
+    public ResponseEntity<HabitDTO> completeHabitToday(@PathVariable Long habitId) {
+        HabitDTO updated = habitService.completeHabitToday(habitId);
+        return ResponseEntity.ok(updated);
+    }
+
 
 }
