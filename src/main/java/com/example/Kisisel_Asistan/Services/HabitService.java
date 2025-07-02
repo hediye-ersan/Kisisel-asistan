@@ -10,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,5 +64,31 @@ public class HabitService {
         }
         habitRepository.deleteById(habitId);
     }
+
+    public HabitDTO completeHabitToday(Long habitId) {
+        Habit habit = habitRepository.findById(habitId)
+                .orElseThrow(() -> new RuntimeException("Alışkanlık bulunamadı."));
+
+        LocalDate today = LocalDate.now();
+        LocalDate lastDate = habit.getLastTrackedDate();
+
+        if (lastDate != null && lastDate.isEqual(today)) {
+            // Bugün zaten işaretlenmiş
+            return HabitMapper.toDTO(habit);
+        }
+
+        if (lastDate != null && lastDate.plusDays(1).isEqual(today)) {
+            // Dün yapılmış → streak devam ediyor
+            habit.setStreakCount(habit.getStreakCount() + 1);
+        } else {
+            // Ya ilk defa yapılıyor ya da arada gün atlanmış → sıfırla
+            habit.setStreakCount(1);
+        }
+
+        habit.setLastTrackedDate(today);
+        Habit updated = habitRepository.save(habit);
+        return HabitMapper.toDTO(updated);
+    }
+
 
 }
