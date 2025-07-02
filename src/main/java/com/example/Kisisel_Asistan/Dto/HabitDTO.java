@@ -18,7 +18,7 @@ public class HabitDTO {
     private String description;
     private HabitFrequency frequency;
     private int streakCount;
-    private LocalDate lastTrackedDate;
+    private LocalDate lastTrackedDate; // son takip tarihi
     private LocalDateTime createdAt;
     private Long userId; // ilişkiyi doğrudan Entity yerine ID olarak taşıyoruz
 }
