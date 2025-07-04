@@ -17,6 +17,7 @@ public class HabitDTO {
     private String title;
     private String description;
     private HabitFrequency frequency;
+    private String badge;
     private int streakCount;
     private LocalDate lastTrackedDate; // son takip tarihi
     private LocalDateTime createdAt;

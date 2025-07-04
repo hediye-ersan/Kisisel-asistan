@@ -10,6 +10,7 @@ public class HabitMapper {
                 .title(habit.getTitle())
                 .description(habit.getDescription())
                 .frequency(habit.getFrequency())
+                .badge(calculateBadge(habit.getStreakCount()))
                 .streakCount(habit.getStreakCount())
                 .lastTrackedDate(habit.getLastTrackedDate())
                 .createdAt(habit.getCreatedAt())
@@ -28,6 +29,14 @@ public class HabitMapper {
                 .user(user)
                 .build();
     }
+
+    private static String calculateBadge(int streak) {
+        if (streak >= 14) return "Altın";
+        if (streak >= 7) return "Gümüş";
+        if (streak >= 3) return "Bronz";
+        return "Başlangıç";
+    }
+
 }
 
 //DTO sınıfı sadece ihtiyaç duyduğumuz verileri taşır — entity’nin aynısı değil.
