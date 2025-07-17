@@ -3,6 +3,7 @@ package com.example.Kisisel_Asistan.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,9 +30,9 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 
-    private LocalDateTime dueDate;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate dueDate;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -39,15 +40,15 @@ public class Task {
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = LocalDate.now();
+        this.updatedAt = LocalDate.now();
         if (this.status == null) this.status = TaskStatus.TODO;
         if (this.priority == null) this.priority = TaskPriority.MEDIUM;
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = LocalDate.now();
     }
 
 
