@@ -21,29 +21,30 @@ public class AiRecommendationService {
     private final TaskRepository taskRepository;
     private final HabitRepository habitRepository;
 
-    public String generateDailyRecommendation(Long userId){
+    public String generateDailyRecommendation(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Bu id'ye ait kullanıcı bulunamadı: " + userId));
 
-        //görevleri kontrol et
-       List<Task> todayTasks = taskRepository.findByUser(user).stream().filter(task -> {if(task.getDueDate() == null) return false;
-        return task.getDueDate().toLocalDate().isEqual(LocalDate.now());
-        })
+        // Görevleri kontrol et
+        List<Task> todayTasks = taskRepository.findByUser(user).stream()
+                .filter(task -> task.getDueDate() != null &&
+                        task.getDueDate().isEqual(LocalDate.now()))
                 .toList();
+
         long doneCount = todayTasks.stream()
                 .filter(task -> task.getStatus() == TaskStatus.DONE)
                 .count();
 
-        String taskMessage;
-        if (todayTasks.isEmpty()) {
-            taskMessage = "Bugün için henüz görev planlamadınız.";
-        } else if (doneCount == 0) {
-            taskMessage = "Görevlerin hazır ama henüz başlamamışsın.";
-        } else if (doneCount < todayTasks.size()) {
-            taskMessage = "Harika başladın! Görevlerinin bir kısmını tamamladın.";
-        } else {
-            taskMessage = "Bugünkü tüm görevleri tamamladın. Süpersin!";
-        }
+        String taskMessage = switch ((int) doneCount) {
+        case 0 -> todayTasks.isEmpty()
+            ? "Bugün için henüz görev planlamadınız."
+            : todayTasks.stream().anyMatch(task -> task.getStatus() == TaskStatus.IN_PROGRESS)
+                ? "Görevlerin üzerinde çalışıyorsun ama henüz tamamlamadığın görevler var."
+                : "Görevlerin hazır ama henüz başlamamışsın.";
+         default -> doneCount < todayTasks.size()
+            ? "Harika başladın! Görevlerinin bir kısmını tamamladın."
+            : "Bugünkü tüm görevleri tamamladın. Süpersin!";
+};
 
         // Alışkanlıkları kontrol et
         List<Habit> habits = habitRepository.findByUser(user);
@@ -64,3 +65,4 @@ public class AiRecommendationService {
         return taskMessage + " " + habitMessage;
     }
 }
+
