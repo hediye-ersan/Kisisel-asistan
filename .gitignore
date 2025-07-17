@@ -4,7 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-#Application specific files
+#Application specific file
 application.properties
 
 ### STS ###
